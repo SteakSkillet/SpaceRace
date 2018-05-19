@@ -9,109 +9,20 @@ canvas.style.backgroundColor = "green";
 document.body.appendChild(canvas);
 
 //set state
-var gameState ={
+var gameState = {
 	newGame: 0
 };
 
-//entities
-function player(name, sprite, x){
-	this.name = name;
-	this.sprite = sprite;
-	this.x = x;
+var usa = new Player("USA", "USA", 230);
+var ussr = new Player("USSR", "USSR", 650);
 
-	//defaults
-	this.y = 600;
-	this.destY = 300;
-	this.speed = 8;
-	this.width = 10;
-	this.height = 18;
+var player1Opt1 = new Rect(65, 50);
+var player1Opt2 = new Rect(65, 150);
+var player1Opt3 = new Rect(65, 250);
 
-	this.fuel = {
-		value: 0,
-		text: "Fuel: ",
-		counter: "supplies",
-		increase: 0,
-		decrease: 0
-	};
-
-	this.supplies = {
-		value: 0,
-		text: "Supplies: ",
-		counter: "training",
-		increase: 0,
-		decrease: 0
-	};
-
-	this.training = {
-		value: 0,
-		text: "Training: ",
-		counter: "fuel",
-		increase: 0,
-		decrease: 0
-	};
-
-	this.ready = false;
-	this.move = false;
-
-	this.score = 0;
-	this.state = gameState.newGame;
-	this.playerState = 0//pending
-};
-
-var usa = new player("USA", "USA", 230);
-var ussr = new player("USSR", "USSR", 650);
-
-//Display turn option buttons
-function rect(x, y){
-	this.x = x;
-	this.y = y;
-
-	//defaults
-	this.width = 100;
-	this.height = 80;
-};
-
-var player1Opt1 = new rect(65, 50);
-var player1Opt2 = new rect(65, 150);
-var player1Opt3 = new rect(65, 250);
-
-var player2Opt1 = new rect(795, 50);
-var player2Opt2 = new rect(795, 150);
-var player2Opt3 = new rect(795, 250);
-
-//Display shuttles
-var spriteLoader = {
-	sprites: {},
-	keys: [],
-	source: "./",
-	extension: ".png",
-	loaded: 0,
-
-	doAfterLoaded: function () {},
-
-	loadSprites: function () {
-		var keys = this.keys;
-		var source = this.source;
-		var extension = this.extension;
-
-		for ( var i = 0; i < keys.length; i++ ) {
-			var key = keys[i];
-			var sprite = new Image();
-			sprite.src = source + key + extension;
-			this.sprites[key] = sprite;
-			sprite.onload = function () {
-				this.loaded++;
-				if ( this.loaded == this.keys.length ) {
-					this.doAfterLoaded();
-				}
-			}.bind(this);
-		}
-	},
-
-	getSprite: function ( key ) {
-		return this.sprites[key];
-	}
-};
+var player2Opt1 = new Rect(795, 50);
+var player2Opt2 = new Rect(795, 150);
+var player2Opt3 = new Rect(795, 250);
 
 spriteLoader.source = "./images/";
 spriteLoader.keys = [
