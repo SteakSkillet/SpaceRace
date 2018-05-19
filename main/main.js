@@ -1,5 +1,5 @@
 //Space Race
-
+//test
 //Set background
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
@@ -16,18 +16,19 @@ var gameState = {
 var usa = new Player("USA", "USA", 230);
 var ussr = new Player("USSR", "USSR", 650);
 
-var player1Opt1 = new Rect(65, 50);
-var player1Opt2 = new Rect(65, 150);
-var player1Opt3 = new Rect(65, 250);
+var player1Opt1 = new Rect(65, 50,"select_button");
+var player1Opt2 = new Rect(65, 150,"select_button");
+var player1Opt3 = new Rect(65, 250,"select_button");
 
-var player2Opt1 = new Rect(795, 50);
-var player2Opt2 = new Rect(795, 150);
-var player2Opt3 = new Rect(795, 250);
+var player2Opt1 = new Rect(795, 50,"select_button");
+var player2Opt2 = new Rect(795, 150,"select_button");
+var player2Opt3 = new Rect(795, 250,"select_button");
 
 spriteLoader.source = "./images/";
 spriteLoader.keys = [
 	"USA",
-	"USSR"
+	"USSR",
+	"select_button"
 ];
 
 spriteLoader.loadSprites();
@@ -69,26 +70,48 @@ function randomInt(min, max){
 	return Math.floor(Math.random() * (max - min)) + min;
 };
 
+//Display turn options
+function displayOptions(activePlayer, inactivePlayer, resourceIncrease, resourceDecrease, option){
+	var textToWrite = activePlayer[resourceIncrease].text;
+	var textWidth = context.measureText(textToWrite).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite, option.x + 20, option.height / 2 + option.y - 16);
+	context.fillText(activePlayer[resourceIncrease].increase, option.x + 20 + textWidth, option.height / 2 + option.y - 16);
+
+	var textToWrite2 = inactivePlayer[resourceDecrease].text;
+	var textWidth2 = context.measureText(textToWrite2).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite2, option.x + 20, option.height / 2 + option.y + 16);
+	context.fillText(inactivePlayer[resourceDecrease].decrease, option.x + 20 + textWidth2, option.height / 2 + option.y + 16);
+};
+
+function drawRect(rect){
+	var img = spriteLoader.getSprite(rect.sprite);
+	context.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+};
+
+//Display resources
+function displayResources(player, resource, x, y){
+	var textToWrite = player[resource].text;
+	var textWidth = context.measureText(textToWrite).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite, x, y);
+
+	context.fillStyle = "black";
+	context.fillText(player[resource].value, x + textWidth, y);
+};
+
 //render all images
 function renderAll(){
 	//Display shuttles
-		var usaImage = spriteLoader.getSprite("USA");
-		var ussrImage = spriteLoader.getSprite("USSR");
+	var usaImage = spriteLoader.getSprite("USA");
+	var ussrImage = spriteLoader.getSprite("USSR");
 
-		context.drawImage(usaImage, usa.x, usa.y);
-		context.drawImage(ussrImage, ussr.x, ussr.y);
-
-//Display resources
-	function displayResources(player, resource, x, y){
-		var textToWrite = player[resource].text;
-		var textWidth = context.measureText(textToWrite).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite, x, y);
-
-		context.fillStyle = "black";
-		context.fillText(player[resource].value, x + textWidth, y);
-	};
+	context.drawImage(usaImage, usa.x, usa.y);
+	context.drawImage(ussrImage, ussr.x, ussr.y);
 
 	displayResources(usa, "fuel", 50, 600);
 	displayResources(usa, "supplies", 50, 620);
@@ -101,42 +124,12 @@ function renderAll(){
 	if (usa.launching || ussr.launching) {
 		var launching = usa.launching ? usa : ussr;
     if (launching.y > launching.destY) {
-        launching.y -= launching.speed;
-    }
-	else {
-        launching.launching = false;
-    }
-    }
-
-	//Display turn options
-	function displayOptions(activePlayer, inactivePlayer, resourceIncrease, resourceDecrease, option){
-		var textToWrite = activePlayer[resourceIncrease].text;
-		var textWidth = context.measureText(textToWrite).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite, option.x + 20, option.height / 2 + option.y - 16);
-		context.fillText(activePlayer[resourceIncrease].increase, option.x + 20 + textWidth, option.height / 2 + option.y - 16);
-
-		var textToWrite2 = inactivePlayer[resourceDecrease].text;
-		var textWidth2 = context.measureText(textToWrite2).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite2, option.x + 20, option.height / 2 + option.y + 16);
-		context.fillText(inactivePlayer[resourceDecrease].decrease, option.x + 20 + textWidth2, option.height / 2 + option.y + 16);
-	};
-
-	displayOptions(usa, ussr, "fuel", "supplies", player1Opt1);
-	displayOptions(usa, ussr, "supplies", "training", player1Opt2);
-	displayOptions(usa, ussr, "training", "fuel", player1Opt3);
-
-	displayOptions(ussr, usa, "fuel", "supplies", player2Opt1);
-	displayOptions(ussr, usa, "supplies", "training", player2Opt2);
-	displayOptions(ussr, usa, "training", "fuel", player2Opt3);
-
-	function drawRect(rect){
-	context.rect(rect.x, rect.y, rect.width, rect.height)
-	context.stroke();
-	};
+      launching.y -= launching.speed;
+  	}
+		else {
+      launching.launching = false;
+  	}
+	}
 
 	drawRect(player1Opt1);
 	drawRect(player1Opt2);
@@ -144,6 +137,14 @@ function renderAll(){
 	drawRect(player2Opt1);
 	drawRect(player2Opt2);
 	drawRect(player2Opt3);
+
+	displayOptions(usa, ussr, "fuel", "supplies", player1Opt1);
+	displayOptions(usa, ussr, "supplies", "training", player1Opt2);
+	displayOptions(usa, ussr, "training", "fuel", player1Opt3);
+
+	displayOptions(ussr, usa, "fuel", "supplies", player2Opt1);
+  displayOptions(ussr, usa, "supplies", "training", player2Opt2);
+	displayOptions(ussr, usa, "training", "fuel", player2Opt3);
 
 	/*if (endGame == true){
 		var player1Text = "USA Score: ";
