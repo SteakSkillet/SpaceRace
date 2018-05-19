@@ -70,26 +70,48 @@ function randomInt(min, max){
 	return Math.floor(Math.random() * (max - min)) + min;
 };
 
+//Display turn options
+function displayOptions(activePlayer, inactivePlayer, resourceIncrease, resourceDecrease, option){
+	var textToWrite = activePlayer[resourceIncrease].text;
+	var textWidth = context.measureText(textToWrite).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite, option.x + 20, option.height / 2 + option.y - 16);
+	context.fillText(activePlayer[resourceIncrease].increase, option.x + 20 + textWidth, option.height / 2 + option.y - 16);
+
+	var textToWrite2 = inactivePlayer[resourceDecrease].text;
+	var textWidth2 = context.measureText(textToWrite2).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite2, option.x + 20, option.height / 2 + option.y + 16);
+	context.fillText(inactivePlayer[resourceDecrease].decrease, option.x + 20 + textWidth2, option.height / 2 + option.y + 16);
+};
+
+function drawRect(rect){
+	var img = spriteLoader.getSprite(rect.sprite);
+	context.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+};
+
+//Display resources
+function displayResources(player, resource, x, y){
+	var textToWrite = player[resource].text;
+	var textWidth = context.measureText(textToWrite).width;
+
+	context.fillStyle = "black";
+	context.fillText(textToWrite, x, y);
+
+	context.fillStyle = "black";
+	context.fillText(player[resource].value, x + textWidth, y);
+};
+
 //render all images
 function renderAll(){
 	//Display shuttles
-		var usaImage = spriteLoader.getSprite("USA");
-		var ussrImage = spriteLoader.getSprite("USSR");
+	var usaImage = spriteLoader.getSprite("USA");
+	var ussrImage = spriteLoader.getSprite("USSR");
 
-		context.drawImage(usaImage, usa.x, usa.y);
-		context.drawImage(ussrImage, ussr.x, ussr.y);
-
-//Display resources
-	function displayResources(player, resource, x, y){
-		var textToWrite = player[resource].text;
-		var textWidth = context.measureText(textToWrite).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite, x, y);
-
-		context.fillStyle = "black";
-		context.fillText(player[resource].value, x + textWidth, y);
-	};
+	context.drawImage(usaImage, usa.x, usa.y);
+	context.drawImage(ussrImage, ussr.x, ussr.y);
 
 	displayResources(usa, "fuel", 50, 600);
 	displayResources(usa, "supplies", 50, 620);
@@ -102,34 +124,12 @@ function renderAll(){
 	if (usa.launching || ussr.launching) {
 		var launching = usa.launching ? usa : ussr;
     if (launching.y > launching.destY) {
-        launching.y -= launching.speed;
-    }
-	else {
-        launching.launching = false;
-    }
-    }
-
-	//Display turn options
-	function displayOptions(activePlayer, inactivePlayer, resourceIncrease, resourceDecrease, option){
-		var textToWrite = activePlayer[resourceIncrease].text;
-		var textWidth = context.measureText(textToWrite).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite, option.x + 20, option.height / 2 + option.y - 16);
-		context.fillText(activePlayer[resourceIncrease].increase, option.x + 20 + textWidth, option.height / 2 + option.y - 16);
-
-		var textToWrite2 = inactivePlayer[resourceDecrease].text;
-		var textWidth2 = context.measureText(textToWrite2).width;
-
-		context.fillStyle = "black";
-		context.fillText(textToWrite2, option.x + 20, option.height / 2 + option.y + 16);
-		context.fillText(inactivePlayer[resourceDecrease].decrease, option.x + 20 + textWidth2, option.height / 2 + option.y + 16);
-	};
-
-	function drawRect(rect){
-		var img = spriteLoader.getSprite(rect.sprite);
-		context.drawImage(img, rect.x, rect.y, rect.width, rect.height);
-	};
+      launching.y -= launching.speed;
+  	}
+		else {
+      launching.launching = false;
+  	}
+	}
 
 	drawRect(player1Opt1);
 	drawRect(player1Opt2);
