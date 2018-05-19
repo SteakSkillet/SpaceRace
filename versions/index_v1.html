@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+//Space Race
+
+//Set background
+var canvas = document.createElement("canvas");
+var context = canvas.getContext("2d");
+canvas.width = 960;
+canvas.height = 720;
+canvas.style.backgroundColor = "white";
+document.body.appendChild(canvas);
+
+//Display rules/instructions
+
+//Entities
+var usa = {
+	name: "USA",
+	color: "white",
+	x: 230,
+	y: 600,
+	width: 20,
+	height: 50,
+	fuel: 0,
+	supplies: 0,
+	training: 0,
+	score: 0,
+	turn: 0
+};
+
+var ussr = {
+	name: "USSR",
+	color: "red",
+	x: 710,
+	y: 600,
+	width: 20,
+	height: 50,
+	fuel: 0,
+	supplies: 0,
+	training: 0,
+	score: 0,
+	turn: 0
+};
+
+//Display shuttles
+var spriteLoader = {
+	sprites: {},
+	keys: [],
+	source: "./",
+	extension: ".png",
+	loaded: 0,
+	
+	doAfterLoaded: function () {},
+	
+	loadSprites: function () {
+		var keys = this.keys;
+		var source = this.source;
+		var extension = this.extension;
+		
+		for ( var i = 0; i < keys.length; i++ ) {
+			var key = keys[i];
+			var sprite = new Image();
+			sprite.src = source + key + extension;
+			this.sprites[key] = sprite;
+			sprite.onload = function () {
+				this.loaded++;
+				if ( this.loaded == this.keys.length ) {
+					this.doAfterLoaded();
+				}
+			}.bind(this);
+		}
+	},
+	
+	getSprite: function ( key ) {
+		return this.sprites[key];
+	}
+};
+
+spriteLoader.source = "./images/";
+spriteLoader.keys = [
+	"USA",
+	"USSR"
+];
+spriteLoader.loadSprites();
+spriteLoader.doAfterLoaded = function () {
+	
+	var usa = spriteLoader.getSprite("USA");
+	var ussr = spriteLoader.getSprite("USSR");
+	var drawX = 230;
+	var drawY = 600;
+	var drawWidth = 10;
+	var drawHeight = 18;
+		
+	context.drawImage(usa, drawX, drawY);
+	drawX = drawX + 420;
+	context.drawImage(ussr, drawX, drawY);
+};	
+
+/*function render(ent){
+	context.fillStyle = ent.color;
+	context.fillRect(ent.x, ent.y, ent.width, ent.height);
+	console.log(ent.name, "Fuel:", ent.fuel, "Supplies", ent.supplies, "Training", ent.training); //console for now, eventually display on screen
+};
+
+function renderAll(){
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	render(usa);
+	render(ussr);
+};
+
+renderAll();
+*/
+//Display turn option buttons
+context.rect(65, 50, 100, 80);
+context.stroke();
+context.rect(65, 150, 100, 80);
+context.stroke();
+context.rect(65, 250, 100, 80);
+context.stroke();
+context.rect(65, 350, 100, 80);
+context.stroke();
+
+context.rect(795, 50, 100, 80);
+context.stroke();
+context.rect(795, 150, 100, 80);
+context.stroke();
+context.rect(795, 250, 100, 80);
+context.stroke();
+context.rect(795, 350, 100, 80);
+context.stroke();
+
+//Turn options
+//Increase fuel by 1, decrease supplies by 1
+function fuel(player1, player2){
+	player1.fuel = player1.fuel + 1;
+	player2.supplies = player2.supplies - 1;
+	if(player2.supplies < 0) player2.supplies = 0;
+
+	console.log(player1.name, "Fuel:", player1.fuel, "Supplies:", player1.supplies, "Training:", player1.training);
+	console.log(player2.name, "Fuel:", player2.fuel, "Supplies:", player2.supplies, "Training:", player2.training);
+};
+
+//Increase supplies by 1, decrease training by 1
+function supplies(player1, player2){
+	player1.supplies = player1.supplies + 1;
+	player2.training = player2.training - 1;
+	if(player2.training < 0) player2.training = 0;
+
+	console.log(player1.name, "Fuel:", player1.fuel, "Supplies:", player1.supplies, "Training:", player1.training);
+	console.log(player2.name, "Fuel:", player2.fuel, "Supplies:", player2.supplies, "Training:", player2.training);
+};
+
+//Increase training by 1, decrease fuel by 1
+function training(player1, player2){
+	player1.training = player1.training + 1;
+	player2.fuel = player2.fuel - 1;
+	if(player2.fuel < 0) player2.fuel = 0;
+	
+	console.log(player1.name, "Fuel:", player1.fuel, "Supplies:", player1.supplies, "Training:", player1.training);
+	console.log(player2.name, "Fuel:", player2.fuel, "Supplies:", player2.supplies, "Training:", player2.training);
+};
+
+//Show fuel, supplies, and training levels
+
+
+//Turn counter
+var gameTurn = 0;
+function turn(){
+	if(usa.turn == ussr.turn)
+		gameTurn = gameTurn + 1;	
+};	
+//Press turn buttons
+function selection(player1, player2, option){
+	if(player1.turn == gameTurn){
+		option(player1, player2)
+		player1.turn = player1.turn + 1;
+		turn();
+		console.log(player1.name, "Turn:", player1.turn, "GameTurn:", gameTurn);
+	};
+};
+
+//Launch
+function launch(player){
+	if(player.fuel >= 5 + 0.5 * player.supplies && player.supplies >= 5 && player.training >= 5)
+		//calculate score
+		player.score = player.supplies + player.training * 1.5;
+		//show score
+		console.log(player.name, "Score:", player.score);
+		//move ship up accordingly
+		//player 2 gets a turn
+		//else launch failure
+};
+
+document.addEventListener("keydown", function(e) {
+	switch (e.keyCode) {
+		case 81: //Q player 1 option 1
+			selection(usa, ussr, fuel);
+			break;
+		case 87: //W player 1 option 2
+			selection(usa, ussr, supplies);
+			break;
+		case 69: //E player 1 option 3
+			selection(usa, ussr, training);
+			break;
+		case 32: //space bar launch player 1
+			launch(usa);			
+			break;
+		case 73: //I player 2 option 1
+			selection(ussr, usa, fuel);
+			break;
+		case 79: //O player 2 option 2
+			selection(ussr, usa, supplies);
+			break;
+		case 80: //P player 2 option 3
+			selection(ussr, usa, training);
+			break;
+		case 16: //Shift launch player 2
+			launch(ussr);
+			break;		
+		default:
+			console.log(e.keyCode);
+		
+	}
+});
+
+//Launch Success
+
+//Launch Failure
+
+
+
+
+
+</script>
+</body>
+</html>
